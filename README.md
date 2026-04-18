@@ -36,6 +36,3 @@ mvn clean package
 ```bash
 java -jar target/ftp-client-1.0-SNAPSHOT.jar
 ```
-
-## Main Features
-*(You can list the application's features here once they are implemented, e.g., Connect to FTP Server, Upload/Download files, Directory management, etc.)*
