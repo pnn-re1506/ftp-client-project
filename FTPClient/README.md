@@ -45,5 +45,8 @@ java -jar target/ftp-client-1.0.jar
 
 ## Requirements
 
-- Java 8 or higher (JDK)
+- Java 17 or higher (JDK)
 - Maven 3.x
+
+## Integrity Declaration
+I confirm that this submission is my own work. I did not copy code from AI tools, classmates, or online repositories.
