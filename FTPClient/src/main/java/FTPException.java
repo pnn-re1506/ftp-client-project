@@ -1,4 +1,3 @@
-// FTPException - Custom exception for FTP errors (code >= 400)
 public class FTPException extends Exception {
     int code;
     String reply;

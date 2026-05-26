@@ -5,14 +5,12 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-// LocalPanel - Left panel showing local filesystem browser
 public class LocalPanel extends JPanel {
     private JLabel pathLabel;
     private JTable fileTable;
     private DefaultTableModel tableModel;
     private File currentDir;
 
-    // Callback for upload action
     interface LocalListener {
         void onUpload(File file);
     }
@@ -23,12 +21,9 @@ public class LocalPanel extends JPanel {
         setLayout(new BorderLayout(0, 5));
         setBorder(BorderFactory.createTitledBorder("Local Files"));
 
-        // Path label at top
         pathLabel = new JLabel(" ");
         pathLabel.setFont(new Font("Monospaced", Font.PLAIN, 11));
         add(pathLabel, BorderLayout.NORTH);
-
-        // File table
         String[] columns = {"Name", "Size", "Type"};
         tableModel = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int r, int c) { return false; }
@@ -36,8 +31,6 @@ public class LocalPanel extends JPanel {
         fileTable = new JTable(tableModel);
         fileTable.setRowHeight(20);
         fileTable.setFillsViewportHeight(true);
-
-        // Double-click to navigate into folder
         fileTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -48,10 +41,7 @@ public class LocalPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(fileTable);
         add(scrollPane, BorderLayout.CENTER);
-
-        // Button panel at bottom
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 3));
-
         JButton backBtn = new JButton("Back");
         backBtn.addActionListener(e -> goToParent());
 
@@ -66,12 +56,9 @@ public class LocalPanel extends JPanel {
         btnPanel.add(refreshBtn);
         add(btnPanel, BorderLayout.SOUTH);
 
-        // Start at user home directory
         currentDir = new File(System.getProperty("user.home"));
         refreshList();
     }
-
-    // Refresh file listing for current directory
     public void refreshList() {
         tableModel.setRowCount(0);
         pathLabel.setText(currentDir.getAbsolutePath());
@@ -79,7 +66,6 @@ public class LocalPanel extends JPanel {
         File[] files = currentDir.listFiles();
         if (files == null) return;
 
-        // Sort: directories first, then files
         Arrays.sort(files, (a, b) -> {
             if (a.isDirectory() && !b.isDirectory()) return -1;
             if (!a.isDirectory() && b.isDirectory()) return 1;
@@ -94,14 +80,11 @@ public class LocalPanel extends JPanel {
         }
     }
 
-    // Format file size to human-readable
     private String formatSize(long bytes) {
         if (bytes < 1024) return bytes + " B";
         if (bytes < 1024 * 1024) return (bytes / 1024) + " KB";
         return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
     }
-
-    // Navigate into selected directory
     private void navigateSelected() {
         int row = fileTable.getSelectedRow();
         if (row < 0) return;
@@ -113,7 +96,6 @@ public class LocalPanel extends JPanel {
         }
     }
 
-    // Go to parent directory
     private void goToParent() {
         File parent = currentDir.getParentFile();
         if (parent != null) {
@@ -122,7 +104,6 @@ public class LocalPanel extends JPanel {
         }
     }
 
-    // Upload the selected file
     private void uploadSelected() {
         int row = fileTable.getSelectedRow();
         if (row < 0) {
@@ -142,7 +123,6 @@ public class LocalPanel extends JPanel {
         if (listener != null) listener.onUpload(file);
     }
 
-    // Get current directory path
     public File getCurrentDir() {
         return currentDir;
     }

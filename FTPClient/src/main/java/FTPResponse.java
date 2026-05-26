@@ -1,14 +1,13 @@
-// FTPResponse - Parses FTP server replies into code + message
+
 public class FTPResponse {
-    int code;       // 3-digit reply code
-    String message; // full reply text
+    int code;       
+    String message; 
 
     FTPResponse(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    // Parse raw reply string into FTPResponse
     static FTPResponse parse(String raw) {
         if (raw == null || raw.length() < 3) {
             return new FTPResponse(0, raw != null ? raw : "");
@@ -22,7 +21,6 @@ public class FTPResponse {
         }
     }
 
-    // Check if reply indicates an error
     boolean isError() {
         return code >= 400;
     }

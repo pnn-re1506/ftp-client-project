@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
-
-// MainFrame - Main Swing window that ties all panels together
 public class MainFrame extends JFrame {
     private FTPClient ftpClient;
     private LoginPanel loginPanel;
@@ -22,7 +20,6 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // Initialize UI components
     private void initUI() {
         setLayout(new BorderLayout(5, 5));
 
@@ -30,46 +27,36 @@ public class MainFrame extends JFrame {
         localPanel = new LocalPanel();
         remotePanel = new RemotePanel();
         logPanel = new LogPanel();
-
-        // Split pane so local and remote panels are equal width
         JSplitPane splitPane = new JSplitPane(
             JSplitPane.HORIZONTAL_SPLIT, localPanel, remotePanel);
-        splitPane.setResizeWeight(0.5); // equal space
+        splitPane.setResizeWeight(0.5); 
         splitPane.setDividerLocation(0.5);
-
         add(loginPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
         add(logPanel, BorderLayout.SOUTH);
-
-        // Connect FTP client logging to log panel
         ftpClient.setLogListener(msg -> logPanel.appendLog(msg));
     }
 
-    // Wire up all panel callbacks
     private void setupListeners() {
         setupLoginListener();
         setupLocalListener();
         setupRemoteListener();
     }
 
-    // Handle login connect/disconnect
     private void setupLoginListener() {
         loginPanel.setLoginListener(new LoginPanel.LoginListener() {
             public void onConnect(String host, int port, String user, String pass) {
-                // Run in background thread to avoid freezing UI
                 new Thread(() -> {
                     try {
-                        logPanel.appendLog("--- Connecting to " + host + ":" + port + " ---");
+                        logPanel.appendLog("Connecting to " + host + ":" + port);
                         ftpClient.connect(host, port);
                         ftpClient.login(user, pass);
                         String path = ftpClient.pwd();
                         java.util.List<String> files = ftpClient.list();
-
-                        // Update UI on EDT
                         SwingUtilities.invokeLater(() -> {
                             loginPanel.setConnected(true);
                             remotePanel.updateListing(files, path);
-                            logPanel.appendLog("--- Connected successfully ---");
+                            logPanel.appendLog("Connected successfully");
                         });
                     } catch (Exception e) {
                         SwingUtilities.invokeLater(() -> {
@@ -87,14 +74,13 @@ public class MainFrame extends JFrame {
                     ftpClient.quit();
                     SwingUtilities.invokeLater(() -> {
                         loginPanel.setConnected(false);
-                        logPanel.appendLog("--- Disconnected ---");
+                        logPanel.appendLog("Disconnected");
                     });
                 }).start();
             }
         });
     }
 
-    // Handle local panel upload
     private void setupLocalListener() {
         localPanel.setLocalListener(new LocalPanel.LocalListener() {
             public void onUpload(File file) {
@@ -119,7 +105,6 @@ public class MainFrame extends JFrame {
         });
     }
 
-    // Handle remote panel actions
     private void setupRemoteListener() {
         remotePanel.setRemoteListener(new RemotePanel.RemoteListener() {
             public void onChangeDir(String path) {
@@ -213,7 +198,6 @@ public class MainFrame extends JFrame {
         });
     }
 
-    // Refresh remote file listing
     private void refreshRemote() {
         if (!ftpClient.isConnected()) return;
         new Thread(() -> {
@@ -229,13 +213,10 @@ public class MainFrame extends JFrame {
         }).start();
     }
 
-    // Show error dialog
     private void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Error",
             JOptionPane.ERROR_MESSAGE);
     }
-
-    // Application entry point
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = new MainFrame();
