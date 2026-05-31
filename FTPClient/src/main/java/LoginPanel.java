@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 
-// LoginPanel - Top panel with host, port, user, pass, connect button
 public class LoginPanel extends JPanel {
     private JTextField hostField;
     private JTextField portField;
